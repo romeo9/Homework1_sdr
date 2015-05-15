@@ -5,6 +5,12 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+/**
+ * @author Claudia Romeo
+ * @author Dalila Rosati
+ * @author Ludovica Forastieri
+ */
+
 public class Utility {
 
 		/** Metodo che calcola la funzione di errore inversa */

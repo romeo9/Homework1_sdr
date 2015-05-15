@@ -1,6 +1,11 @@
 package SignalProcessor;
 
 import java.util.Random;
+/**
+ * @author Claudia Romeo
+ * @author Dalila Rosati
+ * @author Ludovica Forastieri
+ */
 
 public class Noise {
 
@@ -28,7 +33,10 @@ public class Noise {
 			parteImmaginaria[i] = campione.nextGaussian() * Math.sqrt(varianza / 2);
 		}
 	}
-
+	
+	/**Metodo che calcola l'energia di un rumore
+	 * @return l'energia del rumore
+	 */
 	public double energia() {
 		double energia=0;
 		for(int i=0; i<this.length; i++){

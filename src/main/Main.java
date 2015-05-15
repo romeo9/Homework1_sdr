@@ -2,9 +2,14 @@ package main;
 
 import SignalProcessor.SignalProcessor;
 
+/**
+ * @author Claudia Romeo
+ * @author Dalila Rosati
+ * @author Ludovica Forastieri
+ */
+
 public class Main {
 
-	/** Metodo main */
 	public static void main(String[] arg) throws Exception {
 		int numSequenze = 3;
 		for (int i = 1; i <= numSequenze; i++) {

@@ -5,17 +5,26 @@ import java.io.FileReader;
 import java.io.IOException;
 import utility.Utility;
 
+/**
+ * @author Claudia Romeo
+ * @author Dalila Rosati
+ * @author Ludovica Forastieri
+ */
+
 public class SignalProcessor {
 	private static int NUM_PROVE=1000;
-	
-	/**Metodo che calcola la soglia */
-	public static double calcolaSoglia(double pFa, double snr)	throws Exception {
+
+	/**Metodo che calcola la soglia
+	 * @param pFa è la probabilità di falso allarme
+	 * @param snr è il rapporto segnale rumore
+	 * @return il valore della soglia
+	 * @throws Exception
+	 */
+	public static double calcolaSoglia(double pFa, double snr) throws Exception {
 		double[] energie = new double[NUM_PROVE];
 		Noise  n= new Noise(snr, 1000, 1);
 		for (int i = 0; i < NUM_PROVE; i++) {
-			//n = new Noise(snr, 1000, 1);
 			energie[i] = n.energia();
-			//System.out.println(energie[i]);
 		}
 		double th = Utility.media(energie) + (2 * Math.sqrt(Utility.varianza(energie)) * Utility.InvErf(1 - (2 * pFa)));
 		System.out.print("la soglia è:");
@@ -27,7 +36,11 @@ public class SignalProcessor {
 	}
 
 
-	/** metodo che calcola la probabilità di detection di un segnale */
+	/** metodo che calcola la probabilità di detection di un segnale 
+	 * @param signal segnale ricevuto
+	 * @param soglia
+	 * @return la probabilità di detection di quel segnale con una data soglia
+	 */
 	public static double probabilitàDetection(Signal signal, double soglia) {
 		double energiaBlocco = 0;
 		double count = 0;
@@ -41,17 +54,26 @@ public class SignalProcessor {
 		return (double)count/(double)NUM_PROVE;
 	}
 
-	/** Metodo di supporto per dividere un segnale in più blocchi */
-	public static Signal dividiSegnale(Signal originale, int lowerBound, int upperBound) {
+	/** Metodo di supporto per dividere un segnale in più blocchi 
+	 * @param signOriginale è il segnale originale letto da input
+	 * @param lowerBound è il limite inferiore di divisione del segnale
+	 * @param upperBound è il limite superiore 
+	 * @return il segnale diviso in tale blocco
+	 */
+	public static Signal dividiSegnale(Signal signOriginale, int lowerBound, int upperBound) {
 		Signal blocco = new Signal(upperBound - lowerBound);
 		for (int i = 0; i < upperBound - lowerBound; i++) {
-			blocco.getParteReale()[i] = originale.getParteReale()[i+ lowerBound];
-			blocco.getParteImmaginaria()[i] = originale.getParteImmaginaria()[i+lowerBound];
+			blocco.getParteReale()[i] = signOriginale.getParteReale()[i+ lowerBound];
+			blocco.getParteImmaginaria()[i] = signOriginale.getParteImmaginaria()[i+lowerBound];
 		}
 		return blocco;
 	}
 
-	/** Legge il segnale da file*/
+	/** Legge il segnale da file
+	 * @param pathIn il path del file da leggere da input
+	 * @param numeroCampioni di cui è composto il segnale
+	 * @return il segnale letto
+	 */
 	public static Signal leggiSegnale(String pathIn, int numeroCampioni)
 			throws NumberFormatException, IOException {
 		BufferedReader bReader = new BufferedReader(new FileReader(pathIn));
@@ -68,8 +90,11 @@ public class SignalProcessor {
 		return signal;
 	}
 
-		
-	/** Metodo che testa la presenza dell'utente primario*/
+
+	/** Metodo che testa la presenza dell'utente primario
+	 * @param sequenza il numero della sequenza da leggere
+	 * @param output il numero dell'output in cui è divisa la sequenza
+	 */
 	public static void testDetection(int sequenza, int output) throws Exception {
 		Signal segnale = leggiSegnale("/Users/claudiaromeo/Documents/SDR/Sequenze_SDR_2015/Sequenza_"
 				+ sequenza + "/output_" + output + ".dat",1000000);
@@ -86,15 +111,16 @@ public class SignalProcessor {
 				System.out.println("Sequenza "+sequenza+"\t SNR = "+snr+"\t Probabilità Detection = "+pd*100+"% \t Assenza utente primario" );
 
 	}
+	/**Metodo che calcola l'SNR
+	 * @param energia è l'energia del segnale letto da input
+	 * @return rapporto segnale rumore
+	 */
 	public static double snr(double energia){
 		double pSu = 1;
 		double pN = energia - pSu;
 		double snr = pSu/pN;
 		snr = 10*Math.log10(snr); //linearizzazione
-		
+
 		return snr;
 	}
-
-	
-
 }
