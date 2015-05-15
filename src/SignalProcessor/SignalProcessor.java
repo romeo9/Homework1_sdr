@@ -3,44 +3,42 @@ package SignalProcessor;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
-import java.math.RoundingMode;
-
 import utility.Utility;
 
 public class SignalProcessor {
-
+	private static int NUM_PROVE=1000;
 	
 	/**Metodo che calcola la soglia */
-	public static double calcolaSoglia(int numeroProve, double pFa, double snr)	throws Exception {
-		double[] energie = new double[numeroProve];
+	public static double calcolaSoglia(double pFa, double snr)	throws Exception {
+		double[] energie = new double[NUM_PROVE];
 		Noise  n= new Noise(snr, 1000, 1);
-		for (int i = 0; i < numeroProve; i++) {
+		for (int i = 0; i < NUM_PROVE; i++) {
 			//n = new Noise(snr, 1000, 1);
 			energie[i] = n.energia();
 			//System.out.println(energie[i]);
 		}
 		double th = Utility.media(energie) + (2 * Math.sqrt(Utility.varianza(energie)) * Utility.InvErf(1 - (2 * pFa)));
-		System.out.println("la soglia è:" +th);
+		System.out.print("la soglia è:");
+		if(Double.isNaN(th))
+			System.out.print("-infinity\n");
+		else
+			System.out.print(th +"\n");
 		return th;
 	}
 
 
 	/** metodo che calcola la probabilità di detection di un segnale */
-	public static double probabilitàDetection(Signal signal, int numeroProve, double soglia) {
+	public static double probabilitàDetection(Signal signal, double soglia) {
 		double energiaBlocco = 0;
 		double count = 0;
 		for (int i = 0; i < signal.getLength(); i += 1000) {
 			Signal blocco = dividiSegnale(signal, i, i + 1000);	// divido il segnale
 			energiaBlocco = blocco.energia();			// calcolo l'energia del blocco da 1000 campioni
-			// System.out.println(energiaBlocco);
 			if (energiaBlocco > soglia) {		// se l'energia del blocco è maggiore della soglia incremento il contatore
 				count ++;
 			}
 		}
-		return count/numeroProve;
+		return (double)count/(double)NUM_PROVE;
 	}
 
 	/** Metodo di supporto per dividere un segnale in più blocchi */
@@ -77,12 +75,15 @@ public class SignalProcessor {
 				+ sequenza + "/output_" + output + ".dat",1000000);
 		double snr = snr(segnale.energia());	
 		double pFa = 0.001; // probabilità falso allarme (10^-3)
-		double soglia = calcolaSoglia(1000, pFa, snr);
-		double pd = probabilitàDetection(segnale, 1000, soglia);
+		double soglia = calcolaSoglia(pFa, snr);
+		double pd = probabilitàDetection(segnale, soglia);
 		if (pd >= 0.8) // Se la probabilità di detection è maggiore di 0,8 si suppone la presenza dell'utente primario
 			System.out.println("Sequenza "+sequenza+"\t SNR = "+snr+"\t Probabilità Detection = "+pd*100+"% \t Presenza utente primario");
 		else  			// altrimenti si suppone l'assenza dell'utente primario
-			System.out.println("Sequenza "+sequenza+"\t SNR = "+snr+"\t Probabilità Detection = "+pd*100+"% \t Assenza utente primario" );
+			if(Double.isNaN(snr))
+				System.out.println("Sequenza "+sequenza+"\t SNR = "+"-infinity"+"\t Probabilità Detection = "+pd*100+"% \t Assenza utente primario" );
+			else
+				System.out.println("Sequenza "+sequenza+"\t SNR = "+snr+"\t Probabilità Detection = "+pd*100+"% \t Assenza utente primario" );
 
 	}
 	public static double snr(double energia){
@@ -90,6 +91,7 @@ public class SignalProcessor {
 		double pN = energia - pSu;
 		double snr = pSu/pN;
 		snr = 10*Math.log10(snr); //linearizzazione
+		
 		return snr;
 	}
 
