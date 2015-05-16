@@ -1,4 +1,4 @@
-package SignalProcessor;
+package signalProcessor;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

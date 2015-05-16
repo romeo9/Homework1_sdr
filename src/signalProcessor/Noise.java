@@ -1,4 +1,4 @@
-package SignalProcessor;
+package signalProcessor;
 
 import java.util.Random;
 /**

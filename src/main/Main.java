@@ -1,6 +1,6 @@
 package main;
 
-import SignalProcessor.SignalProcessor;
+import signalProcessor.SignalProcessor;
 
 /**
  * @author Claudia Romeo
