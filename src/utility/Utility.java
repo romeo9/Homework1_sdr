@@ -13,7 +13,7 @@ import java.math.RoundingMode;
 
 public class Utility {
 
-		/** Metodo che calcola la funzione di errore inversa */
+	/** Metodo che calcola la funzione di errore inversa */
 	public static double InvErf(double d) throws Exception {
 		if (Math.abs(d) > 1) {
 			throw new Exception("Allowed values for argument in [-1,1]");
@@ -75,24 +75,31 @@ public class Utility {
 			return bd.doubleValue();
 		}
 	}
-		/** Metodo che calcola la media*/
-		public static double media(double[] d) {
-			double somma = 0;
-			for (int i = 0; i < d.length; i++)
-				somma += d[i];
-			return somma / d.length;
-		}
-
-		public static double varianza(double[] d) {
-			double media = media(d);
-			double temp = 0;
-			for (double i : d)
-				temp += (media - i) * (media - i);
-			return temp / d.length;
-		}
-
-
-
+	/** Metodo che calcola la media
+	 * @param d array di double
+	 * @return media
+	 */
+	public static double media(double[] d) {
+		double somma = 0;
+		for (int i = 0; i < d.length; i++)
+			somma += d[i];
+		return somma / d.length;
 	}
+
+	/**Metodo che calcola la varianza
+	 * @param d array di double
+	 * @return varianza
+	 */
+	public static double varianza(double[] d) {
+		double media = media(d);
+		double temp = 0;
+		for (double i : d)
+			temp += (media - i) * (media - i);
+		return temp / d.length;
+	}
+
+
+
+}
 
 

@@ -21,14 +21,15 @@ public class SignalProcessor {
 	 * @throws Exception
 	 */
 	public static double calcolaSoglia(double pFa, double snr) throws Exception {
-		double[] energie = new double[NUM_PROVE];
-		Noise  n= new Noise(snr, 1000, 1);
+		double[] energie = new double[NUM_PROVE];	//nuovo array di energie
 		for (int i = 0; i < NUM_PROVE; i++) {
-			energie[i] = n.energia();
+			Noise  n = new Noise(snr, 1000, 1);		//genero un rumore di lunghezza uguale ai blocchi in cui ho diviso il segnale
+			energie[i] = n.energia();				//per ogni prova calcolo l'energia del rumore
 		}
-		double th = Utility.media(energie) + (2 * Math.sqrt(Utility.varianza(energie)) * Utility.InvErf(1 - (2 * pFa)));
-		System.out.print("la soglia è:");
-		if(Double.isNaN(th))
+		double th = Utility.media(energie) + (2 * Math.sqrt(Utility.varianza(energie)) * 
+				Utility.InvErf(1 - (2 * pFa)));		//calcolo la soglia
+		System.out.print("la soglia è:");			//se la soglia è NotaNumber la considero come -infinito
+		if(Double.isNaN(th))						
 			System.out.print("-infinity\n");
 		else
 			System.out.print(th +"\n");
@@ -46,8 +47,8 @@ public class SignalProcessor {
 		double count = 0;
 		for (int i = 0; i < signal.getLength(); i += 1000) {
 			Signal blocco = dividiSegnale(signal, i, i + 1000);	// divido il segnale
-			energiaBlocco = blocco.energia();			// calcolo l'energia del blocco da 1000 campioni
-			if (energiaBlocco > soglia) {		// se l'energia del blocco è maggiore della soglia incremento il contatore
+			energiaBlocco = blocco.energia();					// calcolo l'energia del blocco da 1000 campioni
+			if (energiaBlocco > soglia) {						// se l'energia del blocco è maggiore della soglia incremento il contatore
 				count ++;
 			}
 		}
@@ -103,12 +104,12 @@ public class SignalProcessor {
 		double soglia = calcolaSoglia(pFa, snr);
 		double pd = probabilitàDetection(segnale, soglia);
 		if (pd >= 0.8) // Se la probabilità di detection è maggiore di 0,8 si suppone la presenza dell'utente primario
-			System.out.println("Sequenza "+sequenza+"\t SNR = "+snr+"\t Probabilità Detection = "+pd*100+"% \t Presenza utente primario");
+			System.out.println("Sequenza "+sequenza+"\t Output "+output+"\t SNR = "+snr+"\t Probabilità Detection = "+pd*100+"% \t Presenza utente primario");
 		else  			// altrimenti si suppone l'assenza dell'utente primario
 			if(Double.isNaN(snr))
-				System.out.println("Sequenza "+sequenza+"\t SNR = "+"-infinity"+"\t Probabilità Detection = "+pd*100+"% \t Assenza utente primario" );
+				System.out.println("Sequenza "+sequenza+"\t Output "+output+"\t SNR = "+"-infinity"+"\t Probabilità Detection = "+pd*100+"% \t Assenza utente primario" );
 			else
-				System.out.println("Sequenza "+sequenza+"\t SNR = "+snr+"\t Probabilità Detection = "+pd*100+"% \t Assenza utente primario" );
+				System.out.println("Sequenza "+sequenza+"\t Output "+output+"\t SNR = "+snr+"\t Probabilità Detection = "+pd*100+"% \t Assenza utente primario" );
 
 	}
 	/**Metodo che calcola l'SNR
