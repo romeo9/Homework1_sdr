@@ -28,11 +28,6 @@ public class SignalProcessor {
 		}
 		double th = Utility.media(energie) + (2 * Math.sqrt(Utility.varianza(energie)) * 
 				Utility.InvErf(1 - (2 * pFa)));		//calcolo la soglia
-		System.out.print("la soglia :");			//se la soglia  NotaNumber la considero come -infinito
-		if(Double.isNaN(th))						
-			System.out.print("-infinity\n");
-		else
-			System.out.print(th +"\n");
 		return th;
 	}
 
@@ -101,16 +96,18 @@ public class SignalProcessor {
 				+ sequenza + "/output_" + output + ".dat",1000000);
 		double snr = snr(segnale.energia());	
 		double pFa = 0.001; // probabilitˆ falso allarme (10^-3)
+		double energia = segnale.energia();
 		double soglia = calcolaSoglia(pFa, snr);
 		double pd = probabilitˆDetection(segnale, soglia);
+			System.out.println("\nSequenza "+sequenza+" Output "+output);
+			System.out.println("\tSNR = "+snr+" \tSoglia = "+soglia+"\t Energia del segnale = "+energia);
+			System.out.println("Probabilitˆ Detection = "+pd*100+"%");
+			
 		if (pd >= 0.8) // Se la probabilitˆ di detection  maggiore di 0,8 si suppone la presenza dell'utente primario
-			System.out.println("Sequenza "+sequenza+"\t Output "+output+"\t SNR = "+snr+"\t Probabilitˆ Detection = "+pd*100+"% \t Presenza utente primario");
-		else  			// altrimenti si suppone l'assenza dell'utente primario
-			if(Double.isNaN(snr))
-				System.out.println("Sequenza "+sequenza+"\t Output "+output+"\t SNR = "+"-infinity"+"\t Probabilitˆ Detection = "+pd*100+"% \t Assenza utente primario" );
-			else
-				System.out.println("Sequenza "+sequenza+"\t Output "+output+"\t SNR = "+snr+"\t Probabilitˆ Detection = "+pd*100+"% \t Assenza utente primario" );
-
+			System.out.println("-----> PRESENZA UTENTE PRIMARIO <-----\n");
+		else 			// altrimenti si suppone l'assenza dell'utente primario
+			System.out.println("-----> ASSENZA UTENTE PRIMARIO <-----\n");
+		
 	}
 	/**Metodo che calcola l'SNR
 	 * @param energia  l'energia del segnale letto da input

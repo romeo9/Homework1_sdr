@@ -1,5 +1,7 @@
 package signalProcessor;
 
+import java.util.Arrays;
+
 /**
  * @author Claudia Romeo
  * @author Dalila Rosati
@@ -70,6 +72,15 @@ public class Signal {
 		}
 		return energia/this.length;
 	}
+
+	@Override
+	public String toString() {
+		return "Signal [length=" + length + ",\n parteReale="
+				+ Arrays.toString(parteReale) + ",\n parteImmaginaria="
+				+ Arrays.toString(parteImmaginaria) + "]";
+	}
+
+	
 
 	
 }
